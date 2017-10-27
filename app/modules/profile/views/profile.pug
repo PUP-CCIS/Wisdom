@@ -1,0 +1,97 @@
+extends ../../../templates/base
+
+block title
+    title Profile
+
+block body
+    -var hasReport = typeof query.reported!== 'undefined' ? 'User Reported' : '';
+    style(type='text/css').
+        body {
+        background-image: url("/assets/images/homebg.png");
+        }
+        body > .grid {
+        height: 100%;
+        }
+        .column {
+        max-width: 450px;
+        }
+    - var fname;
+    -console.log(resultsForPug,tutorRatings);
+    - var lname ;
+    - var uname ;
+    - var contact ;
+    - var achievements ;
+    - var rpersession;
+    - var session = me;
+    script.
+        function reportFunction(){
+            document.getElementById('form').style.display="block";
+            document.getElementById('id').show();
+        }
+        function backFunction(){
+            document.getElementById('form').style.display="none";
+        }
+    .ui.middle.aligned.center.aligned.grid
+        .column
+            .ui.centered.card
+                each info in resultsForPug
+                    -fname = info.strFirstName;
+                    -lname = info.strLastName;
+                    -uname = info.strUsername;
+                    -contact = info.strContactNo;
+                    if info.charUserType == 'T'
+                        -achievements = info.textAchievements;
+                        -rpersession = info.decRatePerSession;
+                img.ui.image(src='https://www.biography.com/.image/t_share/MTIwNjA4NjM0MDM0MTYxMTY0/mariah-carey-9542177-1-402.jpg' style='width:300px;height:300px')
+                .content
+                    .header #{fname} #{lname}
+                    .meta
+                        span #{uname}
+                    if (rpersession)
+                        - var n = 1;
+                        .description
+                            | #{achievements}
+                        br
+                        p Rate Per Session: #{rpersession}
+                        -console.log(tutorRatings);
+                        p
+                            while n <= tutorRatings
+                                img.ui.image(src='/assets/images/star.png' style='width: 20px;height:20px;')
+                                - n++;
+                        p Subjects Teached
+                        each info, index in resultsForPug
+                            p #{index+1}.  #{info.strSubjectDesc}
+                    p Contact Numbers
+                    i.call.icon
+                    | #{contact}
+                .extra.content
+                    if session!=uname
+                        a(href=`/profile/message/${uname}`).ui.teal.button 
+                            span.icon
+                                i.mail.icon
+                            span Message
+                        button(onclick='reportFunction()').ui.red.button 
+                            span.icon
+                                i.announcement.icon
+                            span Report
+                        form.ui.form(method='get' action=`/profile/report/${uname}` id='form' style='display: none;')
+                            .field
+                                label Reason
+                                textarea(name='reason')
+                            button(type='submit' class='ui red animated fade button')
+                                .visible.content Submit
+                                .hidden.content
+                                    i.check.icon
+                            button(type='button' onclick='backFunction()' id='back').ui.teal.animated.fade.button
+                                .visible.content Back
+                                .hidden.content
+                                     i.arrow.left.icon
+                    else if session==uname
+                        a(href=`/profile/edit`).ui.teal.button 
+                                span.icon
+                                    i.pencil.icon
+                                span Edit
+            if(hasReport)
+                .ui.teal.message #{hasReport}
+       
+                
